@@ -94,6 +94,30 @@ func TestFindWrappedUIComponentsBlock(t *testing.T) {
 	}
 }
 
+func TestFindWrappedUIComponentsNested(t *testing.T) {
+	expected := []string{
+		`<ui-wrapper>
+    Some content
+    <ui-button>
+        Submit
+    </ui-button>
+</ui-wrapper>`,
+	}
+
+	example := `<h1></h1><ui-wrapper>
+    Some content
+    <ui-button>
+        Submit
+    </ui-button>
+</ui-wrapper>`
+
+	result := findWrappedUIElements(example)
+
+	if !reflect.DeepEqual(result, expected) {
+		t.Errorf("Expected %v, but got %v", expected, result)
+	}
+}
+
 func TestFindWrappedUIComponentsWithAttributes(t *testing.T) {
 	expected := []string{
 		"<ui-container class=\"wrapper\">Content</ui-container>",

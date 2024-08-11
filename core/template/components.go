@@ -3,6 +3,8 @@ package template
 import (
 	"fmt"
 	"regexp"
+
+	"github.com/dlclark/regexp2"
 )
 
 // Represents a self closing component
@@ -42,7 +44,6 @@ type WrappedUIComponent struct {
 	InnerContent      string
 	Element           string
 	Attributes        *Attributes
-	ClosingTag        string
 }
 
 // Gets all of the self closing components
@@ -130,8 +131,15 @@ func findSelfClosingUIElements(content string) []string {
 //
 // Since: 0.1.0
 func findWrappedUIElements(content string) []string {
-	regex := regexp.MustCompile(`(?s)<ui-[\w-]+\b[^/>]*>.*?</ui-[\w-]+>`)
-	matches := regex.FindAllString(content, -1)
+	regex := regexp2.MustCompile(`(?s)<(ui-[\w-]+)\b[^>]*>.*?</\1>`, regexp2.None)
+	matches := []string{}
+	match, _ := regex.FindStringMatch(content)
+
+	for match != nil {
+		matches = append(matches, match.String())
+		match, _ = regex.FindNextMatch(match)
+	}
+
 	return matches
 }
 
